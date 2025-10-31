@@ -1,0 +1,6 @@
+# Hide your Giphy API key file
+.env
+
+# System clutter (optional)
+.DS_Store
+Thumbs.db
