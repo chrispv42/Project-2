@@ -13,17 +13,18 @@ form.addEventListener('submit', (e) => {
   const email = document.getElementById('email').value.trim();
   const message = document.getElementById('message').value.trim();
 
-  if (!name || !email || !message) {
-    statusEl.textContent = 'Please complete all fields.';
-    return;
-  }
-  statusEl.textContent = 'Message sent. Thank you!';
+  if (!name || !email || !message) return setStatus('Please complete all fields.', 'error');
+  if (!isValidEmail(email)) return setStatus('Please enter a valid email address.', 'error');
+
+  setStatus('Message sent. Thank you!', 'success');
   form.reset();
+  document.getElementById('name').focus();
 });
 
 clearBtn.addEventListener('click', () => {
   form.reset();
-  statusEl.textContent = '';
+  setStatus('');
+  document.getElementById('name').focus();
 });
 
 themeToggleBtn.addEventListener('click', () => {
@@ -47,4 +48,15 @@ function initTheme() {
     htmlEl.setAttribute('data-bs-theme', 'light');
     themeToggleBtn.textContent = 'Dark';
   }
+}
+
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
+function setStatus(msg, type) {
+  statusEl.textContent = msg;
+  statusEl.classList.remove('text-danger', 'text-success');
+  if (type === 'error') statusEl.classList.add('text-danger');
+  if (type === 'success') statusEl.classList.add('text-success');
 }

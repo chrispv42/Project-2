@@ -1,4 +1,4 @@
-const API_KEY = 'nSQsqL54rwDTPbpc42XwCyt1WQdzZbkb';
+const API_BASE = '/api/giphy';
 const LIMIT = 24;
 
 const form = document.getElementById('searchForm');
@@ -20,33 +20,22 @@ form.addEventListener('submit', async (e) => {
     statusEl.textContent = 'Please enter a search term.';
     return;
   }
-
   statusEl.textContent = 'Searching…';
   resultsEl.innerHTML = '';
   clearSearchBtn.style.display = 'block';
-
   try {
-    const url = new URL('https://api.giphy.com/v1/gifs/search');
-    url.searchParams.set('api_key', API_KEY);
-    url.searchParams.set('q', q);
-    url.searchParams.set('limit', String(LIMIT));
-    url.searchParams.set('rating', 'pg-13');
-    url.searchParams.set('lang', 'en');
-
-    const res = await fetch(url.toString());
+    const res = await fetch(`${API_BASE}?type=search&q=${encodeURIComponent(q)}&limit=${LIMIT}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
     const items = Array.isArray(data.data) ? data.data : [];
     if (!items.length) {
       statusEl.textContent = `No results for “${q}”. Try another term.`;
       return;
     }
-
     renderGifs(items);
     statusEl.textContent = `Showing ${items.length} result(s) for “${q}”.`;
   } catch {
-    statusEl.textContent = 'Could not reach Giphy. Please try again.';
+    statusEl.textContent = 'Could not reach the server. Please try again.';
   }
 });
 
@@ -73,40 +62,31 @@ function makeImgEl(gif, title) {
 
 function renderGifs(items) {
   const frag = document.createDocumentFragment();
-
   items.forEach((gif) => {
     const title = gif.title || 'Untitled';
     const link = gif.url;
-
     const col = document.createElement('div');
     col.className = 'col';
-
     const card = document.createElement('article');
     card.className = 'cardx';
-
     const img = makeImgEl(gif, title);
-
     const meta = document.createElement('div');
     meta.className = 'cardx__meta';
-
     const h3 = document.createElement('h3');
     h3.className = 'cardx__title';
     h3.title = title;
     h3.textContent = title;
-
     const a = document.createElement('a');
     a.className = 'cardx__link';
     a.href = link;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.textContent = 'Open';
-
     meta.append(h3, a);
     card.append(img, meta);
     col.append(card);
     frag.append(col);
   });
-
   resultsEl.innerHTML = '';
   resultsEl.append(frag);
 }
@@ -120,7 +100,8 @@ themeToggleBtn.addEventListener('click', () => {
 
 function initTheme() {
   const saved = localStorage.getItem('gifscout-theme');
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const prefersDark =
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const startDark = saved ? saved === 'dark' : prefersDark;
   if (startDark) {
     bodyEl.classList.add('theme-dark');
@@ -149,7 +130,6 @@ function initSearchClear() {
     clearSearchBtn.style.display = 'none';
     queryInput.focus();
   });
-
   queryInput.addEventListener('input', () => {
     if (queryInput.value.trim() === '') clearSearchBtn.style.display = 'none';
   });
