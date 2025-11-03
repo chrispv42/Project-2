@@ -1,31 +1,70 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>GIFScout • Trending Now</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../CSS/style.css" />
   </head>
   <body class="theme-dark">
-    <nav class="navbar navbar-expand-md bg-body-tertiary sticky-top glassy shadow-lg border-0 overflow-hidden">
+    <nav
+      class="navbar navbar-expand-md bg-body-tertiary sticky-top glassy shadow-lg border-0 overflow-hidden"
+    >
       <div class="container">
         <a class="navbar-brand brand" href="../index.html">GIF<span class="accent">Scout</span></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto gap-3">
-            <li class="nav-item"><a class="nav-link px-2" href="../index.html" aria-label="Home">Home</a></li>
-            <li class="nav-item"><a class="nav-link px-2 active" aria-current="page" href="../trending.html" aria-label="Trending">Trending</a></li>
-            <li class="nav-item"><a class="nav-link px-2" href="../about.html" aria-label="About">About</a></li>
-            <li class="nav-item"><a class="nav-link px-2" href="../contact.html" aria-label="Contact">Contact</a></li>
             <li class="nav-item">
-              <button id="themeToggle" class="btn btn-outline-secondary btn-sm" type="button" aria-label="Toggle theme">Light</button>
+              <a class="nav-link px-2" href="../index.html" aria-label="Home">Home</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link px-2 active"
+                aria-current="page"
+                href="../trending.html"
+                aria-label="Trending"
+                >Trending</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2" href="../about.html" aria-label="About">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2" href="../contact.html" aria-label="Contact">Contact</a>
+            </li>
+            <li class="nav-item">
+              <button
+                id="themeToggle"
+                class="btn btn-outline-secondary btn-sm"
+                type="button"
+                aria-label="Toggle theme"
+              >
+                Light
+              </button>
             </li>
           </ul>
         </div>
@@ -40,14 +79,20 @@
           <div id="results" class="grid mt-3" aria-label="Trending results"></div>
         </div>
       </section>
-      <p class="intro-text text-muted text-center">Enjoy the latest feed from GIPHY Trending • Updates as you load</p>
+      <p class="intro-text text-muted text-center">
+        Live feed from GIPHY Trending • Updates as you load
+      </p>
     </main>
 
     <footer class="container footer text-center small text-muted py-4">
       <p class="mb-0">© 2025 <strong>Fluxline Digital</strong> | All Rights Reserved.</p>
     </footer>
 
-    <script src="JavaScript/trending.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="../JavaScript/trending.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

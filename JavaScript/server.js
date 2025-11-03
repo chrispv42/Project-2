@@ -6,13 +6,10 @@ const giphyHandler = require('./giphy');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files from the current directory
 app.use(express.static(path.join(__dirname, '..')));
 
-// Giphy API proxy endpoint
 app.get('/api/giphy', giphyHandler);
 
-// Catch-all for HTML files to ensure correct routing
 app.get('/:page.html', (req, res) => {
   const page = req.params.page;
   res.sendFile(path.join(__dirname, `${page}.html`));
