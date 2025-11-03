@@ -110,10 +110,25 @@ main {
 .search .search__input:focus {
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
 }
-.search .search__btn {
+.btn-primary {
   background: linear-gradient(45deg, var(--accent), var(--accent-2));
   border: none;
-  color: var(--bg); /* Changed to use --bg for better contrast */
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.btn-outline-secondary {
+  border-color: var(--panel-brd);
+  color: var(--muted);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--panel-brd);
+  color: var(--text);
+}
+
+.search .search__btn {
+  /* Specific styles for search buttons if needed, but general styles are now handled by .btn-primary and .btn-outline-secondary */
 }
 
 .status {
