@@ -1,4 +1,6 @@
 @charset "UTF-8";
+
+/* ================= Theme Tokens ================= */
 :root {
   --bg: #f7f9fc;
   --panel: rgba(255, 255, 255, 0.6);
@@ -23,6 +25,7 @@ body.theme-dark {
   --accent-2: #50e3ff;
 }
 
+/* ================= Reset / Structure ================= */
 *,
 *::before,
 *::after {
@@ -30,29 +33,45 @@ body.theme-dark {
 }
 
 html {
-  height: 100vh;
+  height: 100%;
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  margin: 0;
   font-family: 'Sora', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial;
-  background: radial-gradient(1000px 600px at 10% -10%, rgba(102, 217, 255, 0.2), transparent),
-    linear-gradient(180deg, var(--bg), var(--bg)), fixed;
   color: var(--text);
-  background-repeat: no-repeat;
+  background: transparent; /* background rendered by ::before */
+  position: relative;
 }
 
+/* Fixed, non-repeating multi-layer background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(1000px 600px at 10% -10%, rgba(102, 217, 255, 0.2), transparent),
+    linear-gradient(180deg, var(--bg), var(--bg));
+  background-repeat: no-repeat, no-repeat;
+  background-size: 120% 120%, cover;
+  background-position: 0 -120px, center top;
+}
+
+/* Main grows to push footer down */
 main {
   flex-grow: 1;
 }
 
+/* ================= Layout Helpers ================= */
 .container {
   max-width: 1100px;
 }
 
+/* ================= Navbar ================= */
 .navbar {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -82,18 +101,16 @@ main {
   border-color: var(--panel-brd);
   transition: all 0.3s ease-in-out;
 }
+/* CSS vars don’t work inside data-URLs—use a concrete color */
 .navbar .navbar-toggler .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='var(--muted)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(151,165,179,0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   transition: all 0.3s ease-in-out;
 }
-.navbar .navbar-toggler.collapsed .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='var(--muted)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-}
 .navbar .navbar-toggler:not(.collapsed) .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='var(--muted)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   transform: rotate(90deg);
 }
 
+/* ================= Glass Card ================= */
 .glassy {
   background: var(--panel);
   backdrop-filter: saturate(120%) blur(var(--glass-blur));
@@ -102,6 +119,7 @@ main {
   border-radius: var(--radius);
 }
 
+/* ================= Search ================= */
 .search .search__input {
   background: var(--panel);
   border: 1px solid var(--panel-brd);
@@ -110,44 +128,43 @@ main {
 .search .search__input:focus {
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
 }
+.search .search__btn,
 .btn-primary {
   background: linear-gradient(45deg, var(--accent), var(--accent-2));
   border: none;
   color: var(--bg);
-  font-weight: 600;
 }
-
 .btn-outline-secondary {
   border-color: var(--panel-brd);
   color: var(--muted);
+  background: transparent;
+}
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus-visible {
+  background: linear-gradient(45deg, var(--accent), var(--accent-2));
+  color: var(--bg);
+  border-color: transparent;
 }
 
-.btn-outline-secondary:hover {
-  background-color: var(--panel-brd);
-  color: var(--text);
-}
-
-.search .search__btn {
-  /* Specific styles for search buttons if needed, but general styles are now handled by .btn-primary and .btn-outline-secondary */
-}
-
+/* ================= Status ================= */
 .status {
   color: var(--muted);
   min-height: 1.25rem;
 }
 
+/* ================= Custom Flex Grid ================= */
 .grid {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
   align-items: stretch;
 }
-
 .col {
   flex: 1 1 220px;
   display: flex;
 }
 
+/* ================= GIF Card ================= */
 .cardx {
   display: grid;
   grid-template-rows: auto min-content;
@@ -159,6 +176,11 @@ main {
   -webkit-backdrop-filter: blur(6px);
   box-shadow: var(--shadow);
   overflow: clip;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.cardx:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 .cardx__img {
   display: block;
@@ -192,6 +214,7 @@ main {
   text-decoration: underline;
 }
 
+/* ================= A11y ================= */
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -204,6 +227,7 @@ main {
   border: 0 !important;
 }
 
+/* ================= Footer ================= */
 footer {
   color: var(--muted);
   margin-top: auto;
@@ -213,7 +237,7 @@ footer {
   text-align: center;
 }
 
-/* =============== Mobile ≤ 320px (spec) =============== */
+/* ================= Mobile ≤ 320px ================= */
 @media (max-width: 320px) {
   .search {
     flex-direction: column;

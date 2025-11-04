@@ -1,5 +1,7 @@
-const API_BASE = '/api/giphy';
-const LIMIT = 24;
+const API_KEY = 'TKLzfPDXdkDXok2sZWLzlQoRPB2INJ1F';
+const LIMIT = 50;
+let offset = 0;
+let totalCount = 0;
 
 const form = document.getElementById('searchForm');
 const queryInput = document.getElementById('query');
@@ -7,37 +9,85 @@ const resultsEl = document.getElementById('results');
 const statusEl = document.getElementById('status');
 const themeToggleBtn = document.getElementById('themeToggle');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
+const paginationEl = document.getElementById('pagination');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 const htmlEl = document.documentElement;
 const bodyEl = document.body;
 
 initTheme();
 initSearchClear();
+initPagination();
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
   const q = queryInput.value.trim();
   if (!q) {
     statusEl.textContent = 'Please enter a search term.';
     return;
   }
+  offset = 0;
+  fetchGifs(q, offset);
+});
+
+async function fetchGifs(searchTerm, currentOffset) {
   statusEl.textContent = 'Searching…';
   resultsEl.innerHTML = '';
   clearSearchBtn.style.display = 'block';
+  paginationEl.style.display = 'none';
+
   try {
-    const res = await fetch(`${API_BASE}?type=search&q=${encodeURIComponent(q)}&limit=${LIMIT}`);
+    const url = new URL('https://api.giphy.com/v1/gifs/search');
+    url.searchParams.set('api_key', API_KEY);
+    url.searchParams.set('q', searchTerm);
+    url.searchParams.set('limit', String(LIMIT));
+    url.searchParams.set('offset', String(currentOffset));
+    url.searchParams.set('rating', 'pg-13');
+    url.searchParams.set('lang', 'en');
+
+    const res = await fetch(url.toString());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+
     const items = Array.isArray(data.data) ? data.data : [];
+    totalCount = Number(data.pagination?.total_count ?? 0);
+
     if (!items.length) {
-      statusEl.textContent = `No results for “${q}”. Try another term.`;
+      statusEl.textContent = `No results for “${searchTerm}”. Try another term.`;
       return;
     }
+
     renderGifs(items);
-    statusEl.textContent = `Showing ${items.length} result(s) for “${q}”.`;
+
+    const start = currentOffset + 1;
+    const end = currentOffset + items.length;
+    statusEl.textContent = `Showing ${start}–${end}${
+      totalCount ? ` of ${totalCount}` : ''
+    } for “${searchTerm}”.`;
+
+    const hasMore = totalCount > currentOffset + LIMIT;
+    paginationEl.style.display = hasMore || currentOffset > 0 ? 'flex' : 'none';
+    prevBtn.disabled = currentOffset === 0;
+    nextBtn.disabled = !hasMore;
   } catch {
-    statusEl.textContent = 'Could not reach the server. Please try again.';
+    statusEl.textContent = 'Could not reach Giphy. Please try again.';
   }
-});
+}
+
+function initPagination() {
+  nextBtn.addEventListener('click', () => {
+    const q = queryInput.value.trim();
+    if (!q) return;
+    offset += LIMIT;
+    fetchGifs(q, offset);
+  });
+  prevBtn.addEventListener('click', () => {
+    const q = queryInput.value.trim();
+    if (!q) return;
+    offset = Math.max(0, offset - LIMIT);
+    fetchGifs(q, offset);
+  });
+}
 
 function pickImage(gif) {
   const img = gif.images || {};
@@ -65,23 +115,30 @@ function renderGifs(items) {
   items.forEach((gif) => {
     const title = gif.title || 'Untitled';
     const link = gif.url;
+
     const col = document.createElement('div');
     col.className = 'col';
+
     const card = document.createElement('article');
     card.className = 'cardx';
+
     const img = makeImgEl(gif, title);
+
     const meta = document.createElement('div');
     meta.className = 'cardx__meta';
+
     const h3 = document.createElement('h3');
     h3.className = 'cardx__title';
     h3.title = title;
     h3.textContent = title;
+
     const a = document.createElement('a');
     a.className = 'cardx__link';
     a.href = link;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.textContent = 'Open';
+
     meta.append(h3, a);
     card.append(img, meta);
     col.append(card);
@@ -127,10 +184,16 @@ function initSearchClear() {
     queryInput.value = '';
     resultsEl.innerHTML = '';
     statusEl.textContent = '';
+    paginationEl.style.display = 'none';
     clearSearchBtn.style.display = 'none';
     queryInput.focus();
+    offset = 0;
+    totalCount = 0;
   });
   queryInput.addEventListener('input', () => {
-    if (queryInput.value.trim() === '') clearSearchBtn.style.display = 'none';
+    if (queryInput.value.trim() === '') {
+      clearSearchBtn.style.display = 'none';
+      paginationEl.style.display = 'none';
+    }
   });
 }

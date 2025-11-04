@@ -1,44 +1,82 @@
-const API_BASE = '/api/giphy';
-const LIMIT = 50;
+const API_KEY = 'TKLzfPDXdkDXok2sZWLzlQoRPB2INJ1F';
+const LIMIT = 24;
+let offset = 0;
+let totalCount = 0;
 
 const resultsEl = document.getElementById('results');
 const statusEl = document.getElementById('status');
 const themeToggleBtn = document.getElementById('themeToggle');
+const paginationEl = document.getElementById('pagination');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
 const htmlEl = document.documentElement;
 const bodyEl = document.body;
 
-let offset = 0;
-let totalCount = 0;
-
 initTheme();
-ensurePager();
-loadTrending();
+initPagination();
+loadTrending(offset);
 
-async function loadTrending(delta = 0) {
-  offset = Math.max(0, offset + delta * LIMIT);
-  statusEl.textContent = 'Loading trending…';
+function initPagination() {
+  if (nextBtn)
+    nextBtn.addEventListener('click', () => {
+      if (totalCount && offset + LIMIT >= totalCount) return;
+      offset += LIMIT;
+      loadTrending(offset);
+    });
+  if (prevBtn)
+    prevBtn.addEventListener('click', () => {
+      offset = Math.max(0, offset - LIMIT);
+      loadTrending(offset);
+    });
+}
+
+async function loadTrending(currentOffset) {
+  statusEl.textContent = 'Loading trending GIFs…';
   resultsEl.innerHTML = '';
+  if (paginationEl) paginationEl.style.display = 'none';
+
   try {
-    const res = await fetch(`${API_BASE}?type=trending&limit=${LIMIT}&offset=${offset}`);
+    const url = new URL('https://api.giphy.com/v1/gifs/trending');
+    url.searchParams.set('api_key', API_KEY);
+    url.searchParams.set('limit', String(LIMIT));
+    url.searchParams.set('offset', String(currentOffset));
+    url.searchParams.set('rating', 'pg-13');
+
+    const res = await fetch(url.toString());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+
     const items = Array.isArray(data.data) ? data.data : [];
     totalCount = Number(data.pagination?.total_count ?? 0);
+
     if (!items.length) {
-      statusEl.textContent = 'Nothing trending right now.';
+      statusEl.textContent = 'No trending GIFs found.';
       updatePager();
       return;
     }
+
     renderGifs(items);
-    const start = offset + 1,
-      end = offset + items.length;
+    const start = currentOffset + 1;
+    const end = currentOffset + items.length;
     statusEl.textContent = `Showing ${start}–${end}${
       totalCount ? ` of ${totalCount}` : ''
     } trending GIF(s).`;
+
+    updatePager();
   } catch {
-    statusEl.textContent = 'Could not load trending GIFs.';
+    statusEl.textContent = 'Could not reach Giphy. Please try again.';
   }
-  updatePager();
+}
+
+function updatePager() {
+  const hasPrev = offset > 0;
+  const hasNext = totalCount ? offset + LIMIT < totalCount : true;
+
+  if (paginationEl) {
+    paginationEl.style.display = hasPrev || hasNext ? 'flex' : 'none';
+  }
+  if (prevBtn) prevBtn.disabled = !hasPrev;
+  if (nextBtn) nextBtn.disabled = !hasNext;
 }
 
 function pickImage(gif) {
@@ -51,15 +89,15 @@ function pickImage(gif) {
 
 function makeImgEl(gif, title) {
   const { hi, mid, low } = pickImage(gif);
-  const imgEl = document.createElement('img');
-  imgEl.className = 'cardx__img';
-  imgEl.loading = 'lazy';
-  imgEl.decoding = 'async';
-  imgEl.src = mid;
-  imgEl.srcset = `${low} 200w, ${mid} 480w, ${hi} 800w`;
-  imgEl.sizes = '(min-width: 992px) 30vw, (min-width: 576px) 45vw, 90vw';
-  imgEl.alt = title;
-  return imgEl;
+  const el = document.createElement('img');
+  el.className = 'cardx__img';
+  el.loading = 'lazy';
+  el.decoding = 'async';
+  el.src = mid;
+  el.srcset = `${low} 200w, ${mid} 480w, ${hi} 800w`;
+  el.sizes = '(min-width: 992px) 30vw, (min-width: 576px) 45vw, 90vw';
+  el.alt = title;
+  return el;
 }
 
 function renderGifs(items) {
@@ -67,23 +105,30 @@ function renderGifs(items) {
   items.forEach((gif) => {
     const title = gif.title || 'Untitled';
     const link = gif.url;
+
     const col = document.createElement('div');
     col.className = 'col';
+
     const card = document.createElement('article');
     card.className = 'cardx';
+
     const img = makeImgEl(gif, title);
+
     const meta = document.createElement('div');
     meta.className = 'cardx__meta';
+
     const h3 = document.createElement('h3');
     h3.className = 'cardx__title';
     h3.title = title;
     h3.textContent = title;
+
     const a = document.createElement('a');
     a.className = 'cardx__link';
     a.href = link;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.textContent = 'Open';
+
     meta.append(h3, a);
     card.append(img, meta);
     col.append(card);
@@ -91,35 +136,6 @@ function renderGifs(items) {
   });
   resultsEl.innerHTML = '';
   resultsEl.append(frag);
-}
-
-function ensurePager() {
-  let pager = document.getElementById('pager');
-  if (!pager) {
-    pager = document.createElement('div');
-    pager.id = 'pager';
-    pager.className = 'd-flex justify-content-between align-items-center mt-3';
-    const prev = document.createElement('button');
-    prev.id = 'prevPage';
-    prev.className = 'btn btn-outline-secondary btn-sm';
-    prev.textContent = 'Prev';
-    const next = document.createElement('button');
-    next.id = 'nextPage';
-    next.className = 'btn btn-primary btn-sm';
-    next.textContent = 'Next';
-    pager.append(prev, next);
-    resultsEl.after(pager);
-    prev.addEventListener('click', () => loadTrending(-1));
-    next.addEventListener('click', () => loadTrending(1));
-  }
-}
-
-function updatePager() {
-  const prev = document.getElementById('prevPage');
-  const next = document.getElementById('nextPage');
-  if (!prev || !next) return;
-  prev.disabled = offset === 0;
-  next.disabled = totalCount && offset + LIMIT >= totalCount;
 }
 
 themeToggleBtn.addEventListener('click', () => {

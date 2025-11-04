@@ -38,24 +38,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto gap-3">
+            <li class="nav-item"><a class="nav-link px-2" href="../index.html">Home</a></li>
             <li class="nav-item">
-              <a class="nav-link px-2" href="../index.html" aria-label="Home">Home</a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link px-2 active"
-                aria-current="page"
-                href="../trending.html"
-                aria-label="Trending"
+              <a class="nav-link px-2 active" aria-current="page" href="../trending.html"
                 >Trending</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link px-2" href="../about.html" aria-label="About">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-2" href="../contact.html" aria-label="Contact">Contact</a>
-            </li>
+            <li class="nav-item"><a class="nav-link px-2" href="../about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link px-2" href="../contact.html">Contact</a></li>
             <li class="nav-item">
               <button
                 id="themeToggle"
@@ -77,6 +67,15 @@
           <h2 class="h4 mb-3">Trending Now</h2>
           <div id="status" class="status" aria-live="polite"></div>
           <div id="results" class="grid mt-3" aria-label="Trending results"></div>
+
+          <div
+            id="pagination"
+            class="d-flex gap-2 justify-content-center mt-3"
+            style="display: none"
+          >
+            <button id="prevBtn" class="btn btn-outline-secondary" type="button">Prev</button>
+            <button id="nextBtn" class="btn btn-primary" type="button">Next</button>
+          </div>
         </div>
       </section>
       <p class="intro-text text-muted text-center">
@@ -88,7 +87,7 @@
       <p class="mb-0">© 2025 <strong>Fluxline Digital</strong> | All Rights Reserved.</p>
     </footer>
 
-    <script src="../JavaScript/trending.js" defer></script>
+    <script src="JavaScript/trending.js" defer></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
