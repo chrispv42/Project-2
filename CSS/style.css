@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-/* ================= Theme Tokens ================= */
 :root {
   --bg: #f7f9fc;
   --panel: rgba(255, 255, 255, 0.6);
@@ -25,7 +24,6 @@ body.theme-dark {
   --accent-2: #50e3ff;
 }
 
-/* ================= Reset / Structure ================= */
 *,
 *::before,
 *::after {
@@ -43,11 +41,10 @@ body {
   flex-direction: column;
   font-family: 'Sora', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial;
   color: var(--text);
-  background: transparent; /* background rendered by ::before */
+  background: transparent;
   position: relative;
 }
 
-/* Fixed, non-repeating multi-layer background */
 body::before {
   content: '';
   position: fixed;
@@ -61,56 +58,59 @@ body::before {
   background-position: 0 -120px, center top;
 }
 
-/* Main grows to push footer down */
 main {
   flex-grow: 1;
 }
 
-/* ================= Layout Helpers ================= */
 .container {
   max-width: 1100px;
 }
 
-/* ================= Navbar ================= */
 .navbar {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border: 1px solid var(--panel-brd);
   border-radius: var(--radius);
 }
+
 .navbar .navbar-brand {
   font-weight: 700;
   letter-spacing: 0.4px;
 }
+
 .navbar .navbar-brand .accent {
   color: var(--accent);
 }
+
 .navbar .nav-link {
   color: var(--muted);
   text-decoration: none;
 }
+
 .navbar .nav-link:hover,
 .navbar .nav-link:focus-visible {
   color: var(--text);
 }
+
 .navbar .nav-link.active {
   color: var(--accent);
   font-weight: 600;
 }
+
 .navbar .navbar-toggler {
   border-color: var(--panel-brd);
   transition: all 0.3s ease-in-out;
 }
-/* CSS vars don’t work inside data-URLs—use a concrete color */
+
 .navbar .navbar-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(151,165,179,0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   transition: all 0.3s ease-in-out;
 }
+
 .navbar .navbar-toggler:not(.collapsed) .navbar-toggler-icon {
   transform: rotate(90deg);
 }
 
-/* ================= Glass Card ================= */
 .glassy {
   background: var(--panel);
   backdrop-filter: saturate(120%) blur(var(--glass-blur));
@@ -119,7 +119,6 @@ main {
   border-radius: var(--radius);
 }
 
-/* ================= Search ================= */
 .search .search__input {
   background: var(--panel);
   border: 1px solid var(--panel-brd);
@@ -128,17 +127,20 @@ main {
 .search .search__input:focus {
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
 }
+
 .search .search__btn,
 .btn-primary {
   background: linear-gradient(45deg, var(--accent), var(--accent-2));
   border: none;
   color: var(--bg);
 }
+
 .btn-outline-secondary {
   border-color: var(--panel-brd);
   color: var(--muted);
   background: transparent;
 }
+
 .btn-outline-secondary:hover,
 .btn-outline-secondary:focus-visible {
   background: linear-gradient(45deg, var(--accent), var(--accent-2));
@@ -146,26 +148,25 @@ main {
   border-color: transparent;
 }
 
-/* ================= Status ================= */
 .status {
   color: var(--muted);
   min-height: 1.25rem;
 }
 
-/* ================= Custom Flex Grid ================= */
 .grid {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
   align-items: stretch;
 }
+
 .col {
   flex: 1 1 220px;
   display: flex;
 }
 
-/* ================= GIF Card ================= */
 .cardx {
+  min-height: 300px;
   display: grid;
   grid-template-rows: auto min-content;
   width: 100%;
@@ -178,17 +179,21 @@ main {
   overflow: clip;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+
 .cardx:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
+
 .cardx__img {
   display: block;
   width: 100%;
-  height: 240px;
+  height: 280px;
   object-fit: cover;
-  background: #0f0f1a;
+  object-position: center;
+  border-radius: 8px;
 }
+
 .cardx__meta {
   display: flex;
   align-items: center;
@@ -196,6 +201,7 @@ main {
   gap: 0.5rem;
   padding: 0.75rem 0.85rem;
 }
+
 .cardx__title {
   margin: 0;
   font-size: 0.95rem;
@@ -204,17 +210,18 @@ main {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .cardx__link {
   color: var(--accent);
   text-decoration: none;
   font-weight: 600;
 }
+
 .cardx__link:hover,
 .cardx__link:focus-visible {
   text-decoration: underline;
 }
 
-/* ================= A11y ================= */
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -227,7 +234,6 @@ main {
   border: 0 !important;
 }
 
-/* ================= Footer ================= */
 footer {
   color: var(--muted);
   margin-top: auto;
@@ -237,7 +243,6 @@ footer {
   text-align: center;
 }
 
-/* ================= Mobile ≤ 320px ================= */
 @media (max-width: 320px) {
   .search {
     flex-direction: column;
