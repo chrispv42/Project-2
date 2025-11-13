@@ -1,8 +1,14 @@
+// ==============================
+// Shared constants
+// ==============================
 const API_KEY = 'TKLzfPDXdkDXok2sZWLzlQoRPB2INJ1F';
 const LIMIT = 50;
 let offset = 0;
 let totalCount = 0;
 
+// ==============================
+// Grab elements (may be null on some pages)
+// ==============================
 const form = document.getElementById('searchForm');
 const queryInput = document.getElementById('query');
 const resultsEl = document.getElementById('results');
@@ -15,25 +21,51 @@ const nextBtn = document.getElementById('nextBtn');
 const htmlEl = document.documentElement;
 const bodyEl = document.body;
 
+// ==============================
+// Init
+// ==============================
 initTheme();
-initSearchClear();
-initPagination();
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const q = queryInput.value.trim();
-  if (!q) {
-    statusEl.textContent = 'Please enter a search term.';
-    return;
-  }
-  offset = 0;
-  fetchGifs(q, offset);
-});
+// Only wire Search UI if present on this page
+if (form && queryInput && resultsEl && statusEl) {
+  initSearchClear();
+  initPagination();
 
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = queryInput.value.trim();
+    if (!q) {
+      statusEl.textContent = 'Please enter a search term.';
+      return;
+    }
+    offset = 0;
+    fetchGifs(q, offset);
+  });
+}
+
+// Theme toggle should be safe on every page
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    const isDark = bodyEl.classList.toggle('theme-dark');
+    htmlEl.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+    themeToggleBtn.textContent = isDark ? 'Light' : 'Dark';
+    try {
+      localStorage.setItem('gifscout-theme', isDark ? 'dark' : 'light');
+    } catch {
+      // ignore storage errors
+    }
+  });
+}
+
+// ==============================
+// Fetch Gifs
+// ==============================
 async function fetchGifs(searchTerm, currentOffset) {
+  if (!(resultsEl && statusEl && paginationEl)) return;
+
   statusEl.textContent = 'Searching…';
   resultsEl.innerHTML = '';
-  clearSearchBtn.style.display = 'block';
+  if (clearSearchBtn) clearSearchBtn.style.display = 'block';
   paginationEl.style.display = 'none';
 
   try {
@@ -46,11 +78,11 @@ async function fetchGifs(searchTerm, currentOffset) {
     url.searchParams.set('lang', 'en');
 
     const res = await fetch(url.toString());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
 
     const items = Array.isArray(data.data) ? data.data : [];
-    totalCount = Number(data.pagination?.total_count ?? 0);
+    totalCount = Number((data.pagination && data.pagination.total_count) || 0);
 
     if (!items.length) {
       statusEl.textContent = `No results for “${searchTerm}”. Try another term.`;
@@ -61,34 +93,48 @@ async function fetchGifs(searchTerm, currentOffset) {
 
     const start = currentOffset + 1;
     const end = currentOffset + items.length;
-    statusEl.textContent = `Showing ${start}–${end}${
-      totalCount ? ` of ${totalCount}` : ''
-    } for “${searchTerm}”.`;
+    statusEl.textContent =
+      `Showing ${start}–${end}` + (totalCount ? ` of ${totalCount}` : '') + ` for “${searchTerm}”.`;
 
     const hasMore = totalCount > currentOffset + LIMIT;
     paginationEl.style.display = hasMore || currentOffset > 0 ? 'flex' : 'none';
-    prevBtn.disabled = currentOffset === 0;
-    nextBtn.disabled = !hasMore;
+    if (prevBtn) prevBtn.disabled = currentOffset === 0;
+    if (nextBtn) nextBtn.disabled = !hasMore;
   } catch {
     statusEl.textContent = 'Could not reach Giphy. Please try again.';
   }
 }
 
+// ==============================
+// Pagination
+// ==============================
 function initPagination() {
-  nextBtn.addEventListener('click', () => {
-    const q = queryInput.value.trim();
-    if (!q) return;
-    offset += LIMIT;
-    fetchGifs(q, offset);
-  });
-  prevBtn.addEventListener('click', () => {
-    const q = queryInput.value.trim();
-    if (!q) return;
-    offset = Math.max(0, offset - LIMIT);
-    fetchGifs(q, offset);
-  });
+  if (!paginationEl) return;
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (!queryInput) return;
+      const q = queryInput.value.trim();
+      if (!q) return;
+      offset += LIMIT;
+      fetchGifs(q, offset);
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (!queryInput) return;
+      const q = queryInput.value.trim();
+      if (!q) return;
+      offset = Math.max(0, offset - LIMIT);
+      fetchGifs(q, offset);
+    });
+  }
 }
 
+// ==============================
+// Image helpers
+// ==============================
 function pickImage(gif) {
   const img = gif.images || {};
   const hi = img.downsized_large?.url || img.original?.url;
@@ -111,7 +157,9 @@ function makeImgEl(gif, title) {
 }
 
 function renderGifs(items) {
+  if (!resultsEl) return;
   const frag = document.createDocumentFragment();
+
   items.forEach((gif) => {
     const title = gif.title || 'Untitled';
     const link = gif.url;
@@ -144,42 +192,50 @@ function renderGifs(items) {
     col.append(card);
     frag.append(col);
   });
+
   resultsEl.innerHTML = '';
   resultsEl.append(frag);
 }
 
-themeToggleBtn.addEventListener('click', () => {
-  const isDark = bodyEl.classList.toggle('theme-dark');
-  htmlEl.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
-  themeToggleBtn.textContent = isDark ? 'Light' : 'Dark';
-  localStorage.setItem('gifscout-theme', isDark ? 'dark' : 'light');
-});
-
+// ==============================
+// Theme
+// ==============================
 function initTheme() {
-  const saved = localStorage.getItem('gifscout-theme');
-  const prefersDark =
-    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let saved = null;
+  try {
+    saved = localStorage.getItem('gifscout-theme');
+  } catch {
+    saved = null;
+  }
+
+  let prefersDark = false;
+  try {
+    prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  } catch {
+    prefersDark = false;
+  }
+
   const startDark = saved ? saved === 'dark' : prefersDark;
+
   if (startDark) {
     bodyEl.classList.add('theme-dark');
     htmlEl.setAttribute('data-bs-theme', 'dark');
-    themeToggleBtn.textContent = 'Light';
+    if (themeToggleBtn) themeToggleBtn.textContent = 'Light';
   } else {
     bodyEl.classList.remove('theme-dark');
     htmlEl.setAttribute('data-bs-theme', 'light');
-    themeToggleBtn.textContent = 'Dark';
+    if (themeToggleBtn) themeToggleBtn.textContent = 'Dark';
   }
 }
 
-document.addEventListener('keydown', (e) => {
-  const isMac = navigator.platform.toUpperCase().includes('MAC');
-  if ((isMac && e.metaKey && e.key.toLowerCase() === 'k') || e.key === '/') {
-    e.preventDefault();
-    queryInput.focus();
-  }
-});
-
+// ==============================
+// Search Clear
+// ==============================
 function initSearchClear() {
+  if (!(clearSearchBtn && queryInput && resultsEl && statusEl && paginationEl)) {
+    return;
+  }
+
   clearSearchBtn.addEventListener('click', () => {
     queryInput.value = '';
     resultsEl.innerHTML = '';
@@ -190,6 +246,7 @@ function initSearchClear() {
     offset = 0;
     totalCount = 0;
   });
+
   queryInput.addEventListener('input', () => {
     if (queryInput.value.trim() === '') {
       clearSearchBtn.style.display = 'none';

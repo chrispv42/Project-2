@@ -16,20 +16,29 @@ initTheme();
 initPagination();
 loadTrending(offset);
 
+// ─────────────────────────────
+// Pagination
+// ─────────────────────────────
 function initPagination() {
-  if (nextBtn)
-    nextBtn.addEventListener('click', () => {
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
       if (totalCount && offset + LIMIT >= totalCount) return;
       offset += LIMIT;
       loadTrending(offset);
     });
-  if (prevBtn)
-    prevBtn.addEventListener('click', () => {
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
       offset = Math.max(0, offset - LIMIT);
       loadTrending(offset);
     });
+  }
 }
 
+// ─────────────────────────────
+// Fetch Trending GIFs
+// ─────────────────────────────
 async function loadTrending(currentOffset) {
   statusEl.textContent = 'Loading trending GIFs…';
   resultsEl.innerHTML = '';
@@ -43,7 +52,7 @@ async function loadTrending(currentOffset) {
     url.searchParams.set('rating', 'pg-13');
 
     const res = await fetch(url.toString());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
 
     const items = Array.isArray(data.data) ? data.data : [];
@@ -56,18 +65,26 @@ async function loadTrending(currentOffset) {
     }
 
     renderGifs(items);
+
     const start = currentOffset + 1;
     const end = currentOffset + items.length;
-    statusEl.textContent = `Showing ${start}–${end}${
-      totalCount ? ` of ${totalCount}` : ''
-    } trending GIF(s).`;
+    statusEl.textContent =
+      'Showing ' +
+      start +
+      '–' +
+      end +
+      (totalCount ? ' of ' + totalCount : '') +
+      ' trending GIF(s).';
 
     updatePager();
-  } catch {
+  } catch (err) {
     statusEl.textContent = 'Could not reach Giphy. Please try again.';
   }
 }
 
+// ─────────────────────────────
+// Pagination Update
+// ─────────────────────────────
 function updatePager() {
   const hasPrev = offset > 0;
   const hasNext = totalCount ? offset + LIMIT < totalCount : true;
@@ -79,30 +96,40 @@ function updatePager() {
   if (nextBtn) nextBtn.disabled = !hasNext;
 }
 
+// ─────────────────────────────
+// Image Picker
+// ─────────────────────────────
 function pickImage(gif) {
   const img = gif.images || {};
   const hi = img.downsized_large?.url || img.original?.url;
   const mid = img.downsized_medium?.url || img.fixed_width?.url || hi;
   const low = img.preview_gif?.url || img.fixed_width_small?.url || mid;
-  return { hi, mid, low };
+  return { hi: hi, mid: mid, low: low };
 }
 
+// ─────────────────────────────
+// Image Element Creator
+// ─────────────────────────────
 function makeImgEl(gif, title) {
-  const { hi, mid, low } = pickImage(gif);
+  const imgSet = pickImage(gif);
   const el = document.createElement('img');
   el.className = 'cardx__img';
   el.loading = 'lazy';
   el.decoding = 'async';
-  el.src = mid;
-  el.srcset = `${low} 200w, ${mid} 480w, ${hi} 800w`;
+  el.src = imgSet.mid;
+  el.srcset = imgSet.low + ' 200w, ' + imgSet.mid + ' 480w, ' + imgSet.hi + ' 800w';
   el.sizes = '(min-width: 992px) 30vw, (min-width: 576px) 45vw, 90vw';
   el.alt = title;
   return el;
 }
 
+// ─────────────────────────────
+// Render GIF Grid  ✅ fixed
+// ─────────────────────────────
 function renderGifs(items) {
   const frag = document.createDocumentFragment();
-  items.forEach((gif) => {
+
+  items.forEach(function (gif) {
     const title = gif.title || 'Untitled';
     const link = gif.url;
 
@@ -134,16 +161,22 @@ function renderGifs(items) {
     col.append(card);
     frag.append(col);
   });
+
   resultsEl.innerHTML = '';
   resultsEl.append(frag);
 }
 
-themeToggleBtn.addEventListener('click', () => {
-  const isDark = bodyEl.classList.toggle('theme-dark');
-  htmlEl.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
-  themeToggleBtn.textContent = isDark ? 'Light' : 'Dark';
-  localStorage.setItem('gifscout-theme', isDark ? 'dark' : 'light');
-});
+// ─────────────────────────────
+// Theme Toggle + Init
+// ─────────────────────────────
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', function () {
+    const isDark = bodyEl.classList.toggle('theme-dark');
+    htmlEl.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+    themeToggleBtn.textContent = isDark ? 'Light' : 'Dark';
+    localStorage.setItem('gifscout-theme', isDark ? 'dark' : 'light');
+  });
+}
 
 function initTheme() {
   const saved = localStorage.getItem('gifscout-theme');
@@ -153,10 +186,10 @@ function initTheme() {
   if (startDark) {
     bodyEl.classList.add('theme-dark');
     htmlEl.setAttribute('data-bs-theme', 'dark');
-    themeToggleBtn.textContent = 'Light';
+    if (themeToggleBtn) themeToggleBtn.textContent = 'Light';
   } else {
     bodyEl.classList.remove('theme-dark');
     htmlEl.setAttribute('data-bs-theme', 'light');
-    themeToggleBtn.textContent = 'Dark';
+    if (themeToggleBtn) themeToggleBtn.textContent = 'Dark';
   }
 }
