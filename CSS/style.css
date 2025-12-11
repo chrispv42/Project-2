@@ -188,7 +188,7 @@ main {
 .cardx__img {
   display: block;
   width: 100%;
-  height: 280px;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   border-radius: 8px;

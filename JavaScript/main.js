@@ -150,8 +150,8 @@ function makeImgEl(gif, title) {
   imgEl.loading = 'lazy';
   imgEl.decoding = 'async';
   imgEl.src = mid;
-  imgEl.srcset = `${low} 200w, ${mid} 480w, ${hi} 800w`;
-  imgEl.sizes = '(min-width: 992px) 30vw, (min-width: 576px) 45vw, 90vw';
+  /*imgEl.srcset = `${low} 200w, ${mid} 480w, ${hi} 800w`;
+  imgEl.sizes = '(min-width: 992px) 30vw, (min-width: 576px) 45vw, 90vw';*/
   imgEl.alt = title;
   return imgEl;
 }

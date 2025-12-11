@@ -2,10 +2,7 @@
 <html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>GIFSeekr • Giphy Search</title>
 
     <link
@@ -29,9 +26,7 @@
       class="navbar navbar-expand-md bg-body-tertiary sticky-top glassy shadow-lg border-0 overflow-hidden"
     >
       <div class="container">
-        <a class="navbar-brand brand" href="./index.html">
-          GIF<span class="accent">Seekr</span>
-        </a>
+        <a class="navbar-brand brand" href="./index.html"> GIF<span class="accent">Seekr</span> </a>
         <button
           class="navbar-toggler"
           type="button"
@@ -55,19 +50,18 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link px-2" href="./trending.html" aria-label="Trending"
-                >Trending</a
+              <a class="nav-link px-2" href="./trending.html" aria-label="Trending">Trending</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2" aria-label="Random" href="./random.html"
+                >Random</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link px-2" href="./about.html" aria-label="About"
-                >About</a
-              >
+              <a class="nav-link px-2" href="./about.html" aria-label="About">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link px-2" href="./contact.html" aria-label="Contact"
-                >Contact</a
-              >
+              <a class="nav-link px-2" href="./contact.html" aria-label="Contact">Contact</a>
             </li>
             <li class="nav-item">
               <button
@@ -87,12 +81,7 @@
     <main class="container my-3 my-md-4">
       <section class="card glassy shadow-lg border-0 overflow-hidden">
         <div class="card-body p-3 p-md-4">
-          <form
-            id="searchForm"
-            class="search d-flex gap-2"
-            role="search"
-            autocomplete="off"
-          >
+          <form id="searchForm" class="search d-flex gap-2" role="search" autocomplete="off">
             <label class="visually-hidden" for="query">Search GIFs</label>
             <input
               id="query"
@@ -102,12 +91,7 @@
               placeholder="Search Giphy… (e.g., cats, birthdays, tacos)"
               required
             />
-            <button
-              class="btn btn-primary fw-semibold search__btn"
-              type="submit"
-            >
-              Search
-            </button>
+            <button class="btn btn-primary fw-semibold search__btn" type="submit">Search</button>
             <button
               id="clearSearchBtn"
               class="btn btn-outline-secondary search__btn"
@@ -120,23 +104,11 @@
 
           <div id="status" class="status mt-2" aria-live="polite"></div>
 
-          <div
-            id="results"
-            class="grid mt-3"
-            aria-label="Search results"
-          ></div>
+          <div id="results" class="grid mt-3" aria-label="Search results"></div>
 
-          <div
-            id="pagination"
-            class="d-flex justify-content-between mt-3"
-            style="display: none"
-          >
-            <button id="prevBtn" class="btn btn-primary" type="button">
-              Previous
-            </button>
-            <button id="nextBtn" class="btn btn-primary" type="button">
-              Next
-            </button>
+          <div id="pagination" class="d-flex justify-content-between mt-3" style="display: none">
+            <button id="prevBtn" class="btn btn-primary" type="button">Previous</button>
+            <button id="nextBtn" class="btn btn-primary" type="button">Next</button>
           </div>
         </div>
       </section>
@@ -148,13 +120,8 @@
 
     <footer class="container footer text-center small text-muted py-4">
       <p class="mb-0">
-        © 2025 <strong>Fluxline Digital</strong> | All Rights Reserved | Powered
-        by
-        <a
-          href="https://giphy.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        © 2025 <strong>Fluxline Digital</strong> | All Rights Reserved | Powered by
+        <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/8/82/Giphy-logo.svg"
             alt="GIPHY logo"
@@ -164,7 +131,6 @@
       </p>
     </footer>
 
-   
     <script src="./JavaScript/main.js" defer></script>
 
     <script
