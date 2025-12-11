@@ -87,5 +87,6 @@ So that destiny picks a GIF for me because choices are hard.
 <img src="./Images/randomInitzd.png">
 <img src="./Images/aboutGIFSeekr(1).png">
 <img src="./Images/contactGIFSeekr.png">
+<img src="./Images/navNMode.png">
 
-\*_Thank you for reading and showing interest_
+_Thank you for reading and showing interest_
